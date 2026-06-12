@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baguio Fresh Harvest</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 20px; background: #f4f7f6; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .cart { margin-top: 30px; background: white; padding: 20px; border-radius: 8px; }
+        button { background: #2e7d32; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #1b5e20; }
+    </style>
+</head>
+<body>
+
+    <h1>Baguio Fresh Harvest 🥦</h1>
+    
+    <div class="grid" id="product-list">
+        </div>
+
+    <div class="cart">
+        <h2>Your Cart</h2>
+        <ul id="cart-items"></ul>
+        <p><strong>Total: ₱<span id="cart-total">0</span></strong></p>
+        <button onclick="processCheckout()">Submit Order</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
