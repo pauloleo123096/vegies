@@ -3,30 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baguio Fresh Harvest</title>
+    <title>Baguio Fresh | Prototype</title>
     <style>
-        body { font-family: system-ui, sans-serif; padding: 20px; background: #f4f7f6; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-        .cart { margin-top: 30px; background: white; padding: 20px; border-radius: 8px; }
-        button { background: #2e7d32; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #1b5e20; }
+        /* Base Styles & Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fbf9; color: #333; }
+        
+        /* Navigation */
+        header { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #2e7d32; }
+        .cart-btn { background: #2e7d32; color: white; border: none; padding: 10px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        .cart-btn:hover { background: #1b5e20; }
+        
+        /* Hero Section */
+        .hero { background: linear-gradient(rgba(46, 125, 50, 0.8), rgba(46, 125, 50, 0.8)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80') center/cover; color: white; text-align: center; padding: 80px 20px; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; }
+        .hero p { font-size: 1.2rem; margin-bottom: 25px; opacity: 0.9; }
+        
+        /* Product Grid */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .section-title { text-align: center; margin-bottom: 30px; font-size: 2rem; color: #1b5e20; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; text-align: center; padding-bottom: 20px; }
+        .card:hover { transform: translateY(-5px); }
+        .card-img { width: 100%; height: 200px; background-color: #e8f5e9; display: flex; align-items: center; justify-content: center; font-size: 5rem; }
+        .card h3 { margin: 15px 0 5px; }
+        .card p { color: #666; margin-bottom: 15px; font-weight: bold; }
+        .add-btn { background: white; color: #2e7d32; border: 2px solid #2e7d32; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .add-btn:hover { background: #2e7d32; color: white; }
+
+        /* Cart Modal (The "Wow" Factor for the demo) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: flex-end; z-index: 200; }
+        .modal-overlay.active { display: flex; }
+        .cart-modal { background: white; width: 100%; max-width: 400px; height: 100%; padding: 20px; display: flex; flex-direction: column; animation: slideIn 0.3s forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999; }
+        .cart-items { flex-grow: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #f9f9f9; padding: 10px; border-radius: 8px; }
+        .cart-item-info h4 { margin: 0 0 5px 0; font-size: 1rem; }
+        .remove-btn { color: red; background: none; border: none; cursor: pointer; font-size: 0.9rem; }
+        .cart-footer { border-top: 1px solid #eee; padding-top: 15px; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+        .checkout-btn { width: 100%; background: #2e7d32; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; }
+        .checkout-btn:hover { background: #1b5e20; }
     </style>
 </head>
 <body>
 
-    <h1>Baguio Fresh Harvest 🥦</h1>
-    
-    <div class="grid" id="product-list">
-        </div>
+    <header>
+        <div class="logo">Baguio Fresh 🥦</div>
+        <button class="cart-btn" onclick="toggleCart()">Cart (<span id="cart-count">0</span>)</button>
+    </header>
 
-    <div class="cart">
-        <h2>Your Cart</h2>
-        <ul id="cart-items"></ul>
-        <p><strong>Total: ₱<span id="cart-total">0</span></strong></p>
-        <button onclick="processCheckout()">Submit Order</button>
+    <div class="hero">
+        <h1>Farm to Table, Overnight.</h1>
+        <p>Premium, freshly harvested vegetables directly from Baguio City to your kitchen.</p>
     </div>
 
-    <script src="app.js"></script>
+    <div class="container">
+        <h2 class="section-title">Today's Harvest</h2>
+        <div class="grid" id="product-grid">
+            </div>
+    </div>
+
+    <div class="modal-overlay" id="cart-modal">
+        <div class="cart-modal">
+            <div class="cart-header">
+                <h2>Your Order</h2>
+                <button class="close-btn" onclick="toggleCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cart-items">
+                </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span>₱<span id="cart-total">0</span></span>
+                </div>
+                <button class="checkout-btn" onclick="demoCheckout()">Simulate Automated Order</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Demo Product Data
+        const products = [
+            { id: 1, name: "Premium Broccoli", price: 180, emoji: "🥦" },
+            { id: 2, name: "Fresh Carrots", price: 120, emoji: "🥕" },
+            { id: 3, name: "Sweet Strawberries", price: 250, emoji: "🍓" },
+            { id: 4, name: "Wombok Cabbage", price: 90, emoji: "🥬" },
+            { id: 5, name: "Baguio Potatoes", price: 110, emoji: "🥔" },
+            { id: 6, name: "Cherry Tomatoes", price: 150, emoji: "🍅" }
+        ];
+
+        let cart = [];
+
+        // Render Products
+        const productGrid = document.getElementById('product-grid');
+        products.forEach(product => {
+            productGrid.innerHTML += `
+                <div class="card">
+                    <div class="card-img">${product.emoji}</div>
+                    <h3>${product.name}</h3>
+                    <p>₱${product.price} / kg</p>
+                    <button class="add-btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price})">Add to Cart</button>
+                </div>
+            `;
+        });
+
+        // Cart Logic
+        function addToCart(id, name, price) {
+            cart.push({ id, name, price });
+            updateCartUI();
+            
+            // Visual feedback
+            const cartBtn = document.querySelector('.cart-btn');
+            cartBtn.style.transform = 'scale(1.1)';
+            setTimeout(() => cartBtn.style.transform = 'scale(1)', 200);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            
+            let total = 0;
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align:center; color:#999; margin-top:20px;">Your cart is empty.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    cartItemsContainer.innerHTML += `
+                        <div class="cart-item">
+                            <div class="cart-item-info">
+                                <h4>${item.name}</h4>
+                                <span>₱${item.price}</span>
+                            </div>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                        </div>
+                    `;
+                    total += item.price;
+                });
+            }
+            
+            document.getElementById('cart-total').innerText = total;
+        }
+
+        // Modal Toggles
+        function toggleCart() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('cart-modal').addEventListener('click', function(e) {
+            if (e.target === this) toggleCart();
+        });
+
+        // Checkout Demo Action
+        function demoCheckout() {
+            if (cart.length === 0) {
+                alert("Please add some vegetables first!");
+                return;
+            }
+            alert("Demo Order Triggered! \n\nIn the live version, this data will automatically route to the client's email or database without needing manual processing.");
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        // Initialize empty state
+        updateCartUI();
+    </script>
 </body>
 </html>
