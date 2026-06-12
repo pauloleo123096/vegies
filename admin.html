@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baguio Fresh | Admin Nexus</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; display: flex; }
+        
+        /* Sidebar */
+        .sidebar { width: 250px; background: #1b5e20; color: white; height: 100vh; padding: 20px; position: fixed; }
+        .sidebar h2 { font-size: 1.5rem; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .nav-item { padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 10px; cursor: pointer; font-weight: bold; }
+        
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 40px; width: calc(100% - 250px); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        
+        /* Add Product Form */
+        .add-panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 30px; display: flex; gap: 15px; align-items: center; }
+        .input-field { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+        .btn-add { background: #2e7d32; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-add:hover { background: #1b5e20; }
+        
+        /* Inventory Table */
+        .inventory-card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 15px 20px; border-bottom: 1px solid #eee; }
+        th { background-color: #f8fdf8; color: #2e7d32; font-weight: 600; }
+        
+        /* Interactive Elements */
+        .price-input { width: 80px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; text-align: center; }
+        .toggle-btn { padding: 6px 12px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.85rem; transition: 0.2s; }
+        .btn-available { background: #e8f5e9; color: #2e7d32; }
+        .btn-soldout { background: #ffebee; color: #c62828; }
+        .btn-delete { color: #c62828; background: none; border: none; cursor: pointer; font-weight: bold; text-decoration: underline; }
+        .btn-delete:hover { color: #8e0000; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>🥦 Admin Nexus</h2>
+        <div class="nav-item">📦 Inventory</div>
+        <div class="nav-item" style="background: transparent; opacity: 0.7;">🧾 Orders (Coming Soon)</div>
+        <div class="nav-item" style="background: transparent; opacity: 0.7;">⚙️ Settings</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Inventory Management</h1>
+            <p>Live Dashboard Demo</p>
+        </div>
+
+        <div class="add-panel">
+            <strong>Quick Add:</strong>
+            <input type="text" id="new-emoji" class="input-field" placeholder="Emoji (e.g. 🍆)" style="width: 120px;">
+            <input type="text" id="new-name" class="input-field" placeholder="Product Name (e.g. Eggplant)">
+            <input type="number" id="new-price" class="input-field" placeholder="Price (₱)" style="width: 100px;">
+            <button class="btn-add" onclick="addProduct()">+ Add Product</button>
+        </div>
+
+        <div class="inventory-card">
+            <table id="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Name</th>
+                        <th>Price (₱ / kg)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Shared Mock Database
+        let inventory = [
+            { id: 1, name: "Premium Broccoli", price: 180, emoji: "🥦", isSoldOut: false },
+            { id: 2, name: "Fresh Carrots", price: 120, emoji: "🥕", isSoldOut: false },
+            { id: 3, name: "Sweet Strawberries", price: 250, emoji: "🍓", isSoldOut: true },
+            { id: 4, name: "Wombok Cabbage", price: 90, emoji: "🥬", isSoldOut: false }
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('inventory-body');
+            tbody.innerHTML = '';
+
+            inventory.forEach((item, index) => {
+                const statusClass = item.isSoldOut ? 'btn-soldout' : 'btn-available';
+                const statusText = item.isSoldOut ? 'Sold Out' : 'Available';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size: 1.5rem;">${item.emoji}</td>
+                        <td style="font-weight: 500;">${item.name}</td>
+                        <td>
+                            <input type="number" class="price-input" value="${item.price}" 
+                                   onchange="updatePrice(${index}, this.value)">
+                        </td>
+                        <td>
+                            <button class="toggle-btn ${statusClass}" onclick="toggleStatus(${index})">
+                                ${statusText}
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteProduct(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Actions
+        function updatePrice(index, newPrice) {
+            inventory[index].price = parseInt(newPrice);
+            // In a real app, this triggers a database update here.
+        }
+
+        function toggleStatus(index) {
+            inventory[index].isSoldOut = !inventory[index].isSoldOut;
+            renderTable();
+        }
+
+        function deleteProduct(index) {
+            if(confirm("Are you sure you want to remove " + inventory[index].name + "?")) {
+                inventory.splice(index, 1);
+                renderTable();
+            }
+        }
+
+        function addProduct() {
+            const emoji = document.getElementById('new-emoji').value || '📦';
+            const name = document.getElementById('new-name').value;
+            const price = document.getElementById('new-price').value;
+
+            if (!name || !price) {
+                alert("Please enter a name and price.");
+                return;
+            }
+
+            inventory.push({
+                id: Date.now(),
+                name: name,
+                price: parseInt(price),
+                emoji: emoji,
+                isSoldOut: false
+            });
+
+            // Reset inputs
+            document.getElementById('new-emoji').value = '';
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+
+            renderTable();
+        }
+
+        // Initialize
+        renderTable();
+    </script>
+</body>
+</html>
